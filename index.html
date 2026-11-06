@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Canavar — a lightweight League of Legends companion</title>
+<meta name="description" content="Canavar is a free, lightweight desktop companion for League of Legends: champion select suggestions, rune and item set import, and an informational in-game overlay.">
+<style>
+  :root { --bg:#0d1117; --panel:#151b26; --line:#263042; --text:#e8e3d6; --muted:#9aa4b5; --gold:#e0b45a; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding: 48px 22px 64px; }
+  h1 { font-size: 40px; letter-spacing: 4px; margin: 0 0 6px; color: var(--gold); }
+  h2 { font-size: 20px; margin: 36px 0 10px; color: var(--gold); }
+  p, li { color: var(--text); }
+  .lead { font-size: 19px; color: var(--muted); margin-top: 0; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 18px 22px; margin: 14px 0; }
+  ul { padding-left: 20px; }
+  li { margin: 6px 0; }
+  .muted { color: var(--muted); }
+  .legal { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); margin-top: 48px; padding-top: 16px; }
+  code { background: #1d2534; padding: 1px 6px; border-radius: 4px; }
+  a { color: var(--gold); }
+</style>
+</head>
+<body>
+<main>
+  <h1>CANAVAR</h1>
+  <p class="lead">A free, lightweight desktop companion for League of Legends (Windows). Built for a small group of Turkish players who wanted something faster and simpler than the big overlay apps.</p>
+
+  <h2>What it does</h2>
+  <div class="card">
+    <ul>
+      <li><b>Champion select:</b> reads the current champion select from the League Client and suggests picks and bans for your role, based on aggregated high-elo match statistics (win rate by matchup, team composition, current patch), plus your own match history.</li>
+      <li><b>Runes, item sets, summoner spells:</b> when you lock in, the recommended rune page and item set are written to the client through the League Client API. This can be turned off.</li>
+      <li><b>In-game overlay (informational):</b> small always-on-top boxes showing objective respawn timers based on public game events, your lane statistics compared to average values, an estimate of 1v1 / team-fight strength from levels and items shown on the scoreboard, and the next suggested item. It only displays information; it never controls the game.</li>
+      <li><b>Personal insights:</b> simple habits from your own recent games (deaths, CS, gold difference at 15 minutes).</li>
+      <li><b>Friends can share data:</b> a user can export collected match statistics as a file and send it to a friend.</li>
+    </ul>
+  </div>
+
+  <h2>Riot APIs and data used</h2>
+  <div class="card">
+    <ul>
+      <li><b>Riot Games API</b> (each user enters their own key): <code>LEAGUE-V4</code> (Challenger / Grandmaster / Master ladders), <code>MATCH-V5</code> (match details and timelines), <code>ACCOUNT-V1</code>. Matches are aggregated locally into anonymous statistics (per champion, role, item, rune).</li>
+      <li><b>League Client API (LCU)</b>, locally: champion select session, rune pages, item sets, the user's own match history.</li>
+      <li><b>Live Client Data API</b> (<code>127.0.0.1:2999</code>), locally: the same public scoreboard and event information the player sees in game.</li>
+      <li><b>Data Dragon / Community Dragon</b>: champion, item, rune and augment data and icons.</li>
+      <li>Rate limits are read from Riot's response headers and respected; requests stop immediately when the user stops collection.</li>
+    </ul>
+  </div>
+
+  <h2>Fair play</h2>
+  <div class="card">
+    <ul>
+      <li>No memory reading, no injection, no modification of game files. Compatible with Vanguard by design: only Riot's official local APIs are used.</li>
+      <li>No information hidden from the player is used: no enemy positions, no hidden cooldowns.</li>
+      <li>Suggestions are informational ("you are stronger", "team fight is even"), not automated actions.</li>
+      <li>Optional, off-by-default experimental features read the player's own screen (selected target health bar; ARAM: Mayhem augment card titles). They are clearly labelled and can be removed if required by Riot policy.</li>
+    </ul>
+  </div>
+
+  <h2>Privacy</h2>
+  <div class="card">
+    <p>Canavar has no accounts and no server. All data stays on the user's computer. Nothing is sent anywhere except requests to Riot's APIs and Data Dragon (and, if the user enables it, a version check against the project's GitHub releases). API keys are stored locally and are never included in shared files.</p>
+  </div>
+
+  <h2>Türkçe</h2>
+  <div class="card">
+    <p>Canavar, League of Legends için ücretsiz ve hafif bir masaüstü yardımcısıdır: seçim ekranında şampiyon ve ban önerileri, otomatik rün ve eşya seti aktarımı, oyunda bilgi veren küçük kutular (objektif süreleri, koridor karşılaştırması, takım savaşı gücü, sıradaki eşya) ve kendi maç geçmişinden alışkanlıklar. Oyunun belleğine dokunmaz; sadece Riot'un resmi yerel API'lerini kullanır. Hesap ya da sunucu yoktur, tüm veriler bilgisayarında kalır.</p>
+  </div>
+
+  <h2>Contact</h2>
+  <p>Questions, bug reports or requests from Riot Games: please open an issue at <a href="https://github.com/ayberkbgln/canavar/issues">github.com/ayberkbgln/canavar/issues</a>.</p>
+
+  <p class="legal">Canavar isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing Riot Games properties. Riot Games, and all associated properties are trademarks or registered trademarks of Riot Games, Inc.</p>
+</main>
+</body>
+</html>
