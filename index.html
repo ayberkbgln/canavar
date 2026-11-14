@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Canavar — a lightweight League of Legends companion</title>
-<meta name="description" content="Canavar is a free, lightweight desktop companion for League of Legends: champion select suggestions, rune and item set import, and an informational in-game overlay.">
+<meta name="description" content="Canavar is a free, lightweight desktop companion for League of Legends (Windows and macOS): champion select suggestions, rune and item set import, and an informational in-game overlay.">
 <style>
   :root { --bg:#0d1117; --panel:#151b26; --line:#263042; --text:#e8e3d6; --muted:#9aa4b5; --gold:#e0b45a; }
   * { box-sizing: border-box; }
@@ -26,15 +26,17 @@
 <body>
 <main>
   <h1>CANAVAR</h1>
-  <p class="lead">A free, lightweight desktop companion for League of Legends (Windows). Built for a small group of Turkish players who wanted something faster and simpler than the big overlay apps.</p>
+  <p class="lead">A free, lightweight desktop companion for League of Legends (Windows and macOS). Built for a small group of Turkish players who wanted something faster and simpler than the big overlay apps.</p>
 
   <h2>What it does</h2>
   <div class="card">
     <ul>
-      <li><b>Champion select:</b> reads the current champion select from the League Client and suggests picks and bans for your role, based on aggregated high-elo match statistics (win rate by matchup, team composition, current patch), plus your own match history.</li>
+      <li><b>Champion select:</b> reads the current champion select from the League Client and suggests picks and bans for your role, based on aggregated high-elo statistics (win rate by matchup, team composition, current patch), plus your own match history. Other players are never looked up during champion select.</li>
       <li><b>Runes, item sets, summoner spells:</b> when you lock in, the recommended rune page and item set are written to the client through the League Client API. This can be turned off.</li>
       <li><b>In-game overlay (informational):</b> small always-on-top boxes showing objective respawn timers based on public game events, your lane statistics compared to average values, an estimate of 1v1 / team-fight strength from levels and items shown on the scoreboard, and the next suggested item. It only displays information; it never controls the game.</li>
-      <li><b>Personal insights:</b> simple habits from your own recent games (deaths, CS, gold difference at 15 minutes).</li>
+      <li><b>Player cards after the game has started:</b> once the game is running and player names are visible to everyone, the ranked tier and champion mastery of the opposing players can be shown (optional; needs the user's own Riot API key).</li>
+      <li><b>ARAM: Mayhem augments:</b> a tier letter and rank for each augment on your champion. In line with Riot's policy, augment win rates are never displayed.</li>
+      <li><b>Personal insights:</b> simple habits from your own recent games (deaths, CS, gold difference at 15 minutes) and a post-game review of where your deaths happened, taken from your own match timeline.</li>
       <li><b>Friends can share data:</b> a user can export collected match statistics as a file and send it to a friend.</li>
     </ul>
   </div>
@@ -42,10 +44,11 @@
   <h2>Riot APIs and data used</h2>
   <div class="card">
     <ul>
-      <li><b>Riot Games API</b> (each user enters their own key): <code>LEAGUE-V4</code> (Challenger / Grandmaster / Master ladders), <code>MATCH-V5</code> (match details and timelines), <code>ACCOUNT-V1</code>. Matches are aggregated locally into anonymous statistics (per champion, role, item, rune).</li>
-      <li><b>League Client API (LCU)</b>, locally: champion select session, rune pages, item sets, the user's own match history.</li>
+      <li><b>Riot Games API</b> (each user enters their own key; the app works without one): <code>LEAGUE-V4</code> (Challenger / Grandmaster / Master ladders, and ranked entries by PUUID for the player cards), <code>MATCH-V5</code> (match details and timelines), <code>ACCOUNT-V1</code>, <code>CHAMPION-MASTERY-V4</code> (mastery on the champion being played, for the player cards). Collected matches are aggregated locally into anonymous statistics (per champion, role, item, rune).</li>
+      <li><b>League Client API (LCU)</b>, locally: champion select session, rune pages, item sets, summoner spells, the user's own match history and timelines, owned champions, champion mastery, the friends list (only to label a friend who is on your team) and static champion data.</li>
       <li><b>Live Client Data API</b> (<code>127.0.0.1:2999</code>), locally: the same public scoreboard and event information the player sees in game.</li>
-      <li><b>Data Dragon / Community Dragon</b>: champion, item, rune and augment data and icons.</li>
+      <li><b>Data Dragon / Community Dragon</b>: champion, item, rune and augment data and icons. Riot's public patch notes page is read for a short "changed this patch" label.</li>
+      <li><b>Public statistics sites:</b> aggregated champion statistics (builds, matchups, win rates by role and patch) are read from u.gg and op.gg, with deeplol as a cross-check; ARAM: Mayhem augment rankings come from u.gg and Blitz. Only a champion ID, role and patch are requested; no player or account data is sent. Results are cached and requests are limited per site.</li>
       <li>Rate limits are read from Riot's response headers and respected; requests stop immediately when the user stops collection.</li>
     </ul>
   </div>
@@ -53,21 +56,22 @@
   <h2>Fair play</h2>
   <div class="card">
     <ul>
-      <li>No memory reading, no injection, no modification of game files. Compatible with Vanguard by design: only Riot's official local APIs are used.</li>
-      <li>No information hidden from the player is used: no enemy positions, no hidden cooldowns.</li>
+      <li>No memory reading, no injection, no modification of game files. Compatible with Vanguard by design: game state comes only from Riot's official local APIs.</li>
+      <li>No information hidden from the player is used: nothing from the fog of war and no hidden cooldowns. In-game notes are derived from the public scoreboard (items, levels, CS) and from events the game announces to every player (kills, objectives, turrets).</li>
       <li>Suggestions are informational ("you are stronger", "team fight is even"), not automated actions.</li>
+      <li>No augment or Arena item win rates are shown anywhere; augments get a tier and rank only.</li>
       <li>Optional, off-by-default experimental features read the player's own screen (selected target health bar; ARAM: Mayhem augment card titles). They are clearly labelled and can be removed if required by Riot policy.</li>
     </ul>
   </div>
 
   <h2>Privacy</h2>
   <div class="card">
-    <p>Canavar has no accounts and no server. All data stays on the user's computer. Nothing is sent anywhere except requests to Riot's APIs and Data Dragon (and, if the user enables it, a version check against the project's GitHub releases). API keys are stored locally and are never included in shared files.</p>
+    <p>Canavar has no accounts and no server. All data stays on the user's computer. The only network requests are to Riot's APIs, Data Dragon / Community Dragon, Riot's public patch notes page, and the public statistics endpoints of u.gg, op.gg, deeplol and Blitz listed above (champion ID, role and patch only), plus, if the user enables it, a version check against the project's GitHub releases. API keys are stored locally and are never included in shared files.</p>
   </div>
 
   <h2>Türkçe</h2>
   <div class="card">
-    <p>Canavar, League of Legends için ücretsiz ve hafif bir masaüstü yardımcısıdır: seçim ekranında şampiyon ve ban önerileri, otomatik rün ve eşya seti aktarımı, oyunda bilgi veren küçük kutular (objektif süreleri, koridor karşılaştırması, takım savaşı gücü, sıradaki eşya) ve kendi maç geçmişinden alışkanlıklar. Oyunun belleğine dokunmaz; sadece Riot'un resmi yerel API'lerini kullanır. Hesap ya da sunucu yoktur, tüm veriler bilgisayarında kalır.</p>
+    <p>Canavar, League of Legends için ücretsiz ve hafif bir masaüstü yardımcısıdır (Windows ve macOS): seçim ekranında şampiyon ve ban önerileri, otomatik rün ve eşya seti aktarımı, oyunda bilgi veren küçük kutular (objektif süreleri, koridor karşılaştırması, takım savaşı gücü, sıradaki eşya), oyun başladıktan sonra rakiplerin rütbesi ve şampiyon ustalığı, ARAM: Kargaşa güçlendirmeleri için kademe (kazanma oranı gösterilmez) ve kendi maç geçmişinden alışkanlıklar. Oyunun belleğine dokunmaz; oyun bilgisini sadece Riot'un resmi yerel API'lerinden alır. Toplu şampiyon istatistikleri u.gg, op.gg, deeplol ve Blitz'den okunur; bu sitelere oyuncu verisi gönderilmez. Hesap ya da sunucu yoktur, tüm veriler bilgisayarında kalır.</p>
   </div>
 
   <h2>Contact</h2>
