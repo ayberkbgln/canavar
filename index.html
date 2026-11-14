@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Canavar — a lightweight League of Legends companion</title>
-<meta name="description" content="Canavar is a free, lightweight desktop companion for League of Legends (Windows and macOS): champion select suggestions, rune and item set import, and an informational in-game overlay.">
+<meta name="description" content="Canavar is a free, lightweight desktop companion for League of Legends (Windows and macOS): champion select suggestions, rune and item set import, an informational in-game overlay, and a static pre-game comp guide for Teamfight Tactics.">
 <style>
   :root { --bg:#0d1117; --panel:#151b26; --line:#263042; --text:#e8e3d6; --muted:#9aa4b5; --gold:#e0b45a; }
   * { box-sizing: border-box; }
@@ -35,7 +35,9 @@
       <li><b>Runes, item sets, summoner spells:</b> when you lock in, the recommended rune page and item set are written to the client through the League Client API. This can be turned off.</li>
       <li><b>In-game overlay (informational):</b> small always-on-top boxes showing objective respawn timers based on public game events, your lane statistics compared to average values, an estimate of 1v1 / team-fight strength from levels and items shown on the scoreboard, and the next suggested item. It only displays information; it never controls the game.</li>
       <li><b>Player cards after the game has started:</b> once the game is running and player names are visible to everyone, the ranked tier and champion mastery of the opposing players can be shown (optional; needs the user's own Riot API key).</li>
+      <li><b>ARAM and ARAM: Mayhem champion tiers:</b> during ARAM champion select, a tier letter (S to D) for the champions on your team and on the bench, shown in the app and in a small strip placed over the League Client window. These are aggregated, patch-wide champion tiers; no player is looked up.</li>
       <li><b>ARAM: Mayhem augments:</b> a tier letter and rank for each augment on your champion. In line with Riot's policy, augment win rates are never displayed.</li>
+      <li><b>Teamfight Tactics guide (static, pre-game data):</b> a ranked list of team comps with their final board, item builds, level plan, typical early-game boards, common stage-2 openers and augment tier letters. The player can pin one comp by hand; a small card with that fixed summary is then shown while the TFT client is in front. Nothing is read from the game: not the shop, the board, gold or the offered augments, and no opponent is tracked. The card never changes based on what happens in the game.</li>
       <li><b>Personal insights:</b> simple habits from your own recent games (deaths, CS, gold difference at 15 minutes) and a post-game review of where your deaths happened, taken from your own match timeline.</li>
       <li><b>Friends can share data:</b> a user can export collected match statistics as a file and send it to a friend.</li>
     </ul>
@@ -48,7 +50,7 @@
       <li><b>League Client API (LCU)</b>, locally: champion select session, rune pages, item sets, summoner spells, the user's own match history and timelines, owned champions, champion mastery, the friends list (only to label a friend who is on your team) and static champion data.</li>
       <li><b>Live Client Data API</b> (<code>127.0.0.1:2999</code>), locally: the same public scoreboard and event information the player sees in game.</li>
       <li><b>Data Dragon / Community Dragon</b>: champion, item, rune and augment data and icons. Riot's public patch notes page is read for a short "changed this patch" label.</li>
-      <li><b>Public statistics sites:</b> aggregated champion statistics (builds, matchups, win rates by role and patch) are read from u.gg and op.gg, with deeplol as a cross-check; ARAM: Mayhem augment rankings come from u.gg and Blitz. Only a champion ID, role and patch are requested; no player or account data is sent. Results are cached and requests are limited per site.</li>
+      <li><b>Public statistics sites:</b> aggregated champion statistics (builds, matchups, win rates by role and patch) are read from u.gg and op.gg, with deeplol as a cross-check; ARAM champion tiers come from op.gg, ARAM: Mayhem champion tiers and augment rankings from u.gg and Blitz. Teamfight Tactics comp data (comps, placement distribution, level plans, early boards, per-comp augment tier letters) comes from MetaTFT, with Blitz as a second source; set data (unit, trait, item and augment names) comes from Community Dragon. Only a champion ID, role, patch or comp ID is requested; no player or account data is sent. Results are cached and requests are limited per site.</li>
       <li>Rate limits are read from Riot's response headers and respected; requests stop immediately when the user stops collection.</li>
     </ul>
   </div>
@@ -59,19 +61,21 @@
       <li>No memory reading, no injection, no modification of game files. Compatible with Vanguard by design: game state comes only from Riot's official local APIs.</li>
       <li>No information hidden from the player is used: nothing from the fog of war and no hidden cooldowns. In-game notes are derived from the public scoreboard (items, levels, CS) and from events the game announces to every player (kills, objectives, turrets).</li>
       <li>Suggestions are informational ("you are stronger", "team fight is even"), not automated actions.</li>
-      <li>No augment or Arena item win rates are shown anywhere; augments get a tier and rank only.</li>
+      <li>No augment or Arena item win rates are shown anywhere; augments get a tier and rank only. The same applies to Teamfight Tactics augments: tier letters only, no win rates and no average placements.</li>
+      <li>Teamfight Tactics: the guide is static data that is available before the game. Canavar makes no suggestions based on the current game state and does not scout opponents.</li>
+      <li>To place its boxes, Canavar reads only the position of the League Client and TFT client windows and whether one of them is in front. It does not read the contents of those windows.</li>
       <li>Optional, off-by-default experimental features read the player's own screen (selected target health bar; ARAM: Mayhem augment card titles). They are clearly labelled and can be removed if required by Riot policy.</li>
     </ul>
   </div>
 
   <h2>Privacy</h2>
   <div class="card">
-    <p>Canavar has no accounts and no server. All data stays on the user's computer. The only network requests are to Riot's APIs, Data Dragon / Community Dragon, Riot's public patch notes page, and the public statistics endpoints of u.gg, op.gg, deeplol and Blitz listed above (champion ID, role and patch only), plus, if the user enables it, a version check against the project's GitHub releases. API keys are stored locally and are never included in shared files.</p>
+    <p>Canavar has no accounts and no server. All data stays on the user's computer. The only network requests are to Riot's APIs, Data Dragon / Community Dragon, Riot's public patch notes page, and the public statistics endpoints of u.gg, op.gg, deeplol, Blitz and MetaTFT listed above (champion ID, role, patch or comp ID only), plus, if the user enables it, a version check against the project's GitHub releases. API keys are stored locally and are never included in shared files.</p>
   </div>
 
   <h2>Türkçe</h2>
   <div class="card">
-    <p>Canavar, League of Legends için ücretsiz ve hafif bir masaüstü yardımcısıdır (Windows ve macOS): seçim ekranında şampiyon ve ban önerileri, otomatik rün ve eşya seti aktarımı, oyunda bilgi veren küçük kutular (objektif süreleri, koridor karşılaştırması, takım savaşı gücü, sıradaki eşya), oyun başladıktan sonra rakiplerin rütbesi ve şampiyon ustalığı, ARAM: Kargaşa güçlendirmeleri için kademe (kazanma oranı gösterilmez) ve kendi maç geçmişinden alışkanlıklar. Oyunun belleğine dokunmaz; oyun bilgisini sadece Riot'un resmi yerel API'lerinden alır. Toplu şampiyon istatistikleri u.gg, op.gg, deeplol ve Blitz'den okunur; bu sitelere oyuncu verisi gönderilmez. Hesap ya da sunucu yoktur, tüm veriler bilgisayarında kalır.</p>
+    <p>Canavar, League of Legends için ücretsiz ve hafif bir masaüstü yardımcısıdır (Windows ve macOS): seçim ekranında şampiyon ve ban önerileri, otomatik rün ve eşya seti aktarımı, oyunda bilgi veren küçük kutular (objektif süreleri, koridor karşılaştırması, takım savaşı gücü, sıradaki eşya), oyun başladıktan sonra rakiplerin rütbesi ve şampiyon ustalığı, ARAM ve ARAM: Kargaşa seçim ekranında şampiyon kademeleri, Kargaşa güçlendirmeleri için kademe (kazanma oranı gösterilmez), kendi maç geçmişinden alışkanlıklar ve Taktik Savaşları (TFT) için oyun öncesi hazırlanmış sabit bir comp rehberi (dükkân, tahta ya da sunulan güçlendirmeler okunmaz). Oyunun belleğine dokunmaz; oyun bilgisini sadece Riot'un resmi yerel API'lerinden alır. Toplu istatistikler u.gg, op.gg, deeplol, Blitz ve MetaTFT'den okunur; bu sitelere oyuncu verisi gönderilmez. Hesap ya da sunucu yoktur, tüm veriler bilgisayarında kalır.</p>
   </div>
 
   <h2>Contact</h2>
